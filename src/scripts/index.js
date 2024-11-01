@@ -43,7 +43,9 @@ buttonsClosePopup.forEach((item) => {
 });
 
 popups.forEach((item) => {
-  item.addEventListener("click", () => overlayClose(item));
+  if (item.classList.contains("popup_is-opened")) {
+    item.addEventListener("click", () => overlayClose(item));
+  }
 });
 
 function openImage(item) {
