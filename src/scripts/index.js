@@ -44,7 +44,7 @@ buttonsClosePopup.forEach((item) => {
 
 popups.forEach((item) => {
   if (item.classList.contains("popup_is-opened")) {
-    item.addEventListener("click", () => overlayClose(item));
+    item.addEventListener("click", overlayClose(item));
   }
 });
 
