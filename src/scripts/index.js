@@ -1,9 +1,10 @@
 import "../pages/index.css";
 import { initialCards } from "../components/initialCards.js";
-import { openPopup, closePopup } from "../components/modal.js";
+import { openPopup, closePopup, overlayClose } from "../components/modal.js";
 import { createCard, deleteCard, likeCard } from "../components/cards.js";
 
 const placesList = document.querySelector(".places__list");
+const popups = document.querySelectorAll(".popup");
 
 const popupOpenPicture = document.querySelector(".popup_type_image");
 const popupOpenPictureImage = popupOpenPicture.querySelector(".popup__image");
@@ -39,6 +40,10 @@ initialCards.forEach(function (item) {
 
 buttonsClosePopup.forEach((item) => {
   item.addEventListener("click", () => closePopup(item.closest(".popup")));
+});
+
+popups.forEach((item) => {
+  item.addEventListener("click", () => overlayClose(item));
 });
 
 function openImage(item) {
