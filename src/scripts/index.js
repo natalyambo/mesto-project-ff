@@ -130,7 +130,7 @@ function newCardSubmit(event) {
       placesList.prepend(newPlace);
 
       closePopup(popupNewCard);
-      
+
       newCardForm.reset();
     })
     .catch((err) => {

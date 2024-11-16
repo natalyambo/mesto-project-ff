@@ -65,3 +65,17 @@ export function deleteCardApi(cardId) {
     headers: config.headers,
   }).then(handleResponse);
 }
+
+export function addLikeApi(cardId) {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "PUT",
+    headers: config.headers,
+  }).then(handleResponse);
+}
+
+export function removeLikeApi(cardId) {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "DELETE",
+    headers: config.headers,
+  }).then(handleResponse);
+}
