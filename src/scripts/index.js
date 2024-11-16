@@ -46,7 +46,7 @@ const editingIcon = document.querySelector(".profile__image-editing");
 const editAvatarForm = document.querySelector(
   '.popup__form[name="edit-avatar"]'
 );
-const avatarLink = document.querySelector(".popup__input_type_avatar");
+const avatarLink = editAvatarForm.querySelector(".popup__input_type_avatar");
 
 let userId;
 
@@ -100,6 +100,7 @@ function editFormSubmit(event) {
     .then((data) => {
       profileTitle.textContent = data.name;
       profileDescription.textContent = data.about;
+
       closePopup(popupEditProfile);
     })
 
@@ -130,7 +131,6 @@ function newCardSubmit(event) {
       placesList.prepend(newPlace);
 
       closePopup(popupNewCard);
-
       newCardForm.reset();
     })
     .catch((err) => {
@@ -150,6 +150,7 @@ function editAvatarSubmit(event) {
   changeAvatar(avatarLink.value)
     .then((data) => {
       avatarImage.style.backgroundImage = `url(${data.avatar})`;
+
       closePopup(popupImageEditing);
       editAvatarForm.reset();
     })
@@ -172,14 +173,12 @@ buttonOpenImageEditing.addEventListener("mouseout", function () {
   avatarImage.classList.remove("profile__image-dark");
 });
 
+//Слушатели открытие попапов
 buttonOpenImageEditing.addEventListener("click", function () {
   openPopup(popupImageEditing);
-  clearValidation(popupImageEditing, validationConfig);
+  clearValidation(editAvatarForm, validationConfig);
 });
 
-editAvatarForm.addEventListener("submit", editAvatarSubmit);
-
-//Слушатели для попапов
 buttonOpenModalEditProfile.addEventListener("click", function () {
   inputName.value = profileTitle.textContent;
   inputDescription.value = profileDescription.textContent;
@@ -188,16 +187,20 @@ buttonOpenModalEditProfile.addEventListener("click", function () {
   clearValidation(editForm, validationConfig);
 });
 
-editForm.addEventListener("submit", editFormSubmit);
-
-newCardForm.addEventListener("submit", newCardSubmit);
-
 buttonOpenModalNewCard.addEventListener("click", function () {
   newCardName.value = "";
   newCardLink.value = "";
+
   openPopup(popupNewCard);
   clearValidation(newCardForm, validationConfig);
 });
+
+//Слушатели отправки формы
+editAvatarForm.addEventListener("submit", editAvatarSubmit);
+
+editForm.addEventListener("submit", editFormSubmit);
+
+newCardForm.addEventListener("submit", newCardSubmit);
 
 //Загрузка начальной страницы
 function initialPage() {
