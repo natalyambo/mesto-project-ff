@@ -1,3 +1,13 @@
+.container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  margin-inline-end: 30px;
+}
+
 .profile__image {
   width: 120px;
   height: 120px;
@@ -7,6 +17,27 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  cursor: pointer;
+  filter: brightness(100%); 
+  transition: filter 0.3s;
+}
+
+.profile__image-dark {
+  filter: brightness(20%); 
+  transition: filter 0.3s;
+}
+
+.profile__image-editing {
+  display: none;
+  width: 26px;
+  height: 26px;
+  background-image: url("../../../images/edit-avatar.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  top: 50px;
+  left: 50px;
+  position: absolute;
+  cursor: pointer;
 }
 
 @media screen and (max-width: 740px) {
