@@ -2,6 +2,13 @@ import "../pages/index.css";
 import { openPopup, closePopup, overlayClose } from "../components/modal.js";
 import { createCard, deleteCard, likeCard } from "../components/cards.js";
 import { enableValidation, clearValidation } from "../components/validation.js";
+import {
+  getInitiatCards,
+  getUserData,
+  changeUserData,
+  addNewCard,
+  changeAvatar,
+} from "../components/api.js";
 
 const placesList = document.querySelector(".places__list");
 const popups = document.querySelectorAll(".popup");
@@ -32,12 +39,16 @@ const newCardForm = document.querySelector('.popup__form[name="new-place"]');
 const newCardName = newCardForm.querySelector(".popup__input_type_card-name");
 const newCardLink = newCardForm.querySelector(".popup__input_type_url");
 
-const avatarImage = document.querySelector('.profile__image');
-const popupImageEditing = document.querySelector('.popup_type_edit-avatar');
-const buttonOpenImageEditing = document.querySelector('.container');
-const editingIcon = document.querySelector('.profile__image-editing');
-const editAvatarForm = document.querySelector('.popup__form[name="edit-avatar"]');
-const avatarLink = document.querySelector('.popup__input_type_avatar');
+const avatarImage = document.querySelector(".profile__image");
+const popupImageEditing = document.querySelector(".popup_type_edit-avatar");
+const buttonOpenImageEditing = document.querySelector(".avatar__container");
+const editingIcon = document.querySelector(".profile__image-editing");
+const editAvatarForm = document.querySelector(
+  '.popup__form[name="edit-avatar"]'
+);
+const avatarLink = document.querySelector(".popup__input_type_avatar");
+
+let userId;
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -48,6 +59,9 @@ const validationConfig = {
   errorClass: "popup__error_visible",
 };
 
+enableValidation(validationConfig);
+
+//Закрытие попапов
 buttonsClosePopup.forEach((item) => {
   item.addEventListener("click", () => closePopup(item.closest(".popup")));
 });
@@ -66,6 +80,17 @@ function openImage(item) {
   openPopup(popupOpenPicture);
 }
 
+//Изменение кнопки сохранения при загрузке
+function loadingSaveButton(isLoading, popup) {
+  const saveButton = popup.querySelector(".popup__button");
+  if (isLoading) {
+    saveButton.textContent = "Сохранение...";
+  } else {
+    saveButton.textContent = "Сохранить";
+  }
+}
+
+//Редактирование данных профиля
 function editFormSubmit(event) {
   event.preventDefault();
 
@@ -83,15 +108,16 @@ function editFormSubmit(event) {
     })
     .finally(() => {
       loadingSaveButton(false, popupEditProfile);
-    })
+    });
 }
 
+//Добавление новой карточки
 function newCardSubmit(event) {
   event.preventDefault();
 
   loadingSaveButton(true, popupNewCard);
 
-  addNewCard(nameValue, linkValue)
+  addNewCard(newCardName.value, newCardLink.value)
     .then((data) => {
       const newPlace = createCard(
         data,
@@ -100,9 +126,11 @@ function newCardSubmit(event) {
         openImage,
         userId
       );
+
       placesList.prepend(newPlace);
 
       closePopup(popupNewCard);
+      
       newCardForm.reset();
     })
     .catch((err) => {
@@ -110,64 +138,48 @@ function newCardSubmit(event) {
     })
     .finally(() => {
       loadingSaveButton(false, popupNewCard);
-    })
+    });
 }
 
-
-
-
-
-
-
-
-
-
-
-
-buttonOpenImageEditing.addEventListener('mouseover', function () {
-  editingIcon.setAttribute('style', 'display: block;');
-  avatarImage.classList.add('profile__image-dark');
-})
-
-buttonOpenImageEditing.addEventListener('mouseout', function () {
-  editingIcon.setAttribute('style', 'display: none;')
-  avatarImage.classList.remove('profile__image-dark');
-})
-
-buttonOpenImageEditing.addEventListener('click', function () {
-  openPopup(popupImageEditing);
-  clearValidation(popupImageEditing, validationConfig);
-})
-
-editAvatarForm.addEventListener("submit", editAvatarSubmit);
-
+//Изменение аватара
 function editAvatarSubmit(event) {
   event.preventDefault();
 
   loadingSaveButton(true, popupImageEditing);
 
   changeAvatar(avatarLink.value)
-  .then((data) => {
-    avatarImage.style.backgroundImage = `url(${data.avatar})`;
-    closePopup(popupImageEditing);
-    editAvatarForm.reset();
-  })
-
-  .catch((err) => {
-    console.log(err, "Ошибка при редактировании аватара");
-  })
-  .finally(() => {
-    loadingSaveButton(false, popupImageEditing);
-  })
+    .then((data) => {
+      avatarImage.style.backgroundImage = `url(${data.avatar})`;
+      closePopup(popupImageEditing);
+      editAvatarForm.reset();
+    })
+    .catch((err) => {
+      console.log(err, "Ошибка при редактировании аватара");
+    })
+    .finally(() => {
+      loadingSaveButton(false, popupImageEditing);
+    });
 }
 
+//Слушатели для изменения аватара
+buttonOpenImageEditing.addEventListener("mouseover", function () {
+  editingIcon.setAttribute("style", "display: block");
+  avatarImage.classList.add("profile__image-dark");
+});
 
+buttonOpenImageEditing.addEventListener("mouseout", function () {
+  editingIcon.setAttribute("style", "display: none");
+  avatarImage.classList.remove("profile__image-dark");
+});
 
+buttonOpenImageEditing.addEventListener("click", function () {
+  openPopup(popupImageEditing);
+  clearValidation(popupImageEditing, validationConfig);
+});
 
+editAvatarForm.addEventListener("submit", editAvatarSubmit);
 
-
-
-
+//Слушатели для попапов
 buttonOpenModalEditProfile.addEventListener("click", function () {
   inputName.value = profileTitle.textContent;
   inputDescription.value = profileDescription.textContent;
@@ -187,62 +199,14 @@ buttonOpenModalNewCard.addEventListener("click", function () {
   clearValidation(newCardForm, validationConfig);
 });
 
-enableValidation(validationConfig);
-
-
-
-
-
-
-function loadingSaveButton(isLoading, popup) {
-  const saveButton = popup.querySelector(".popup__button");
-  if (isLoading) {
-    saveButton.textContent = "Сохранение...";
-  } else {
-    saveButton.textContent = "Сохранить";
-  }
-}
-
-
-
-
-
-
-const config = {
-  baseUrl: "https://nomoreparties.co/v1/pwff-cohort-1",
-  headers: {
-    authorization: "30d7dfb4-52db-4323-8529-5ffc3a10a46d",
-    "Content-Type": "application/json",
-  },
-};
-
-function handleResponse(res) {
-  if (!res.ok) {
-    throw new Error(`Ошибка: ${res.status} ${res.statusText}`);
-  }
-  return res.json();
-}
-
-const getInitiatCards = () => {
-  return fetch(`${config.baseUrl}/cards`, {
-    method: "GET",
-    headers: config.headers,
-  }).then(handleResponse);
-};
-
-const getUserData = () => {
-  return fetch(`${config.baseUrl}/users/me`, {
-    method: "GET",
-    headers: config.headers,
-  }).then(handleResponse);
-};
-
+//Загрузка начальной страницы
 function initialPage() {
   return Promise.all([getUserData(), getInitiatCards()])
     .then(([userData, cardsData]) => {
       profileTitle.textContent = userData.name;
       profileDescription.textContent = userData.about;
-      
+      userId = userData._id;
+
       avatarImage.setAttribute(
         "style",
         `background-image: url('${userData.avatar}')`
@@ -265,35 +229,3 @@ function initialPage() {
 }
 
 initialPage();
-
-function changeUserData(nameValue, aboutValue) {
-  return fetch(`${config.baseUrl}/users/me`, {
-    method: "PATCH",
-    headers: config.headers,
-    body: JSON.stringify({
-      name: nameValue,
-      about: aboutValue,
-    }),
-  }).then(handleResponse);
-}
-
-function addNewCard(nameValue, linkValue) {
-  return fetch(`${config.baseUrl}/users/me`, {
-    method: "POST",
-    headers: config.headers,
-    body: JSON.stringify({
-      name: nameValue,
-      about: linkValue,
-    }),
-  }).then(handleResponse);
-}
-
-function changeAvatar(avatarLink) {
-  return fetch(`${config.baseUrl}/users/me/avatar`, {
-    method: "PATCH",
-    headers: config.headers,
-    body: JSON.stringify({
-      avatar: avatarLink
-    }),
-  }).then(handleResponse);
-}

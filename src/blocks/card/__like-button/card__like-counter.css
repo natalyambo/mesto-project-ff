@@ -1,0 +1,7 @@
+.card__like-counter {
+  font-size: 13px;
+  padding: 0;
+  margin: 0;
+  align-self: center;
+  display: none;
+}

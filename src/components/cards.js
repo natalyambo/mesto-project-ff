@@ -1,3 +1,5 @@
+import { cardLikeApi, deleteLikeApi, deleteCardApi } from "./api";
+
 export { createCard, deleteCard, likeCard };
 
 function createCard(item, deleteCard, likeCard, openImage, userId) {
@@ -15,19 +17,27 @@ function createCard(item, deleteCard, likeCard, openImage, userId) {
   cardImage.alt = item.name;
   cardTitle.textContent = item.name;
 
-  deleteButton.addEventListener("click", () => deleteCard(card));
+  if (item.owner._id != userId) {
+    deleteButton.setAttribute("style", "display: none");
+  };
+
+  deleteButton.addEventListener("click", () => deleteCard(card, cardId));
   cardLikeButton.addEventListener("click", likeCard);
   cardImage.addEventListener("click", () => openImage(item));
 
   return card;
-}
+};
 
-function deleteCard(card) {
-  card.remove();
-}
+function deleteCard(card, cardId) {
+  deleteCardApi(cardId)
+  .then(card.remove())
+  .catch((err) => {
+    console.log(err, "Ошибка при удалении карточки");
+  })
+};
 
 function likeCard(event) {
   if (event.target.classList.contains("card__like-button")) {
     event.target.classList.toggle("card__like-button_is-active");
   }
-}
+};
