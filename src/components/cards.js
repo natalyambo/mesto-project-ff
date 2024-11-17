@@ -45,7 +45,9 @@ function createCard(item, deleteCard, likeCard, openImage, userId) {
 
 function deleteCard(card, cardId) {
   deleteCardApi(cardId)
-    .then(card.remove())
+    .then((data) => {
+      card.remove();
+    })
     .catch((err) => {
       console.log(err, "Ошибка при удалении карточки");
     });

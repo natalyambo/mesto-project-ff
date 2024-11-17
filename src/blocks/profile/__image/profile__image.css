@@ -22,7 +22,7 @@
   transition: filter 0.3s;
 }
 
-.profile__image-dark {
+.avatar__container:hover .profile__image {
   filter: brightness(20%);
   transition: filter 0.3s;
 }
@@ -38,6 +38,10 @@
   left: 50px;
   position: absolute;
   cursor: pointer;
+}
+
+.avatar__container:hover .profile__image-editing {
+  display: block;
 }
 
 @media screen and (max-width: 740px) {

@@ -19,10 +19,10 @@ const popupOpenPictureCaption = document.querySelector(".popup__caption");
 const buttonsClosePopup = document.querySelectorAll(".popup__close"); //Одна кнопка у всех попапов
 
 const popupEditProfile = document.querySelector(".popup_type_edit");
+const saveEditButton = popupEditProfile.querySelector(".popup__button");
 const buttonOpenModalEditProfile = document.querySelector(
   ".profile__edit-button"
 );
-
 const editForm = document.querySelector('.popup__form[name="edit-profile"]');
 const inputName = editForm.querySelector(".popup__input_type_name");
 const inputDescription = editForm.querySelector(
@@ -33,6 +33,7 @@ const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
 const popupNewCard = document.querySelector(".popup_type_new-card");
+const saveNewCardButton = popupNewCard.querySelector(".popup__button");
 const buttonOpenModalNewCard = document.querySelector(".profile__add-button");
 
 const newCardForm = document.querySelector('.popup__form[name="new-place"]');
@@ -41,8 +42,8 @@ const newCardLink = newCardForm.querySelector(".popup__input_type_url");
 
 const avatarImage = document.querySelector(".profile__image");
 const popupImageEditing = document.querySelector(".popup_type_edit-avatar");
+const saveAvatarButton = popupImageEditing.querySelector(".popup__button");
 const buttonOpenImageEditing = document.querySelector(".avatar__container");
-const editingIcon = document.querySelector(".profile__image-editing");
 const editAvatarForm = document.querySelector(
   '.popup__form[name="edit-avatar"]'
 );
@@ -81,12 +82,11 @@ function openImage(item) {
 }
 
 //Изменение кнопки сохранения при загрузке
-function loadingSaveButton(isLoading, popup) {
-  const saveButton = popup.querySelector(".popup__button");
+function loadSaveButton(isLoading, button, loadingText, finalText) {
   if (isLoading) {
-    saveButton.textContent = "Сохранение...";
+    button.textContent = loadingText;
   } else {
-    saveButton.textContent = "Сохранить";
+    button.textContent = finalText;
   }
 }
 
@@ -94,7 +94,7 @@ function loadingSaveButton(isLoading, popup) {
 function editFormSubmit(event) {
   event.preventDefault();
 
-  loadingSaveButton(true, popupEditProfile);
+  loadSaveButton(true, saveEditButton, "Сохранение...", "Сохранить");
 
   changeUserData(inputName.value, inputDescription.value)
     .then((data) => {
@@ -108,15 +108,15 @@ function editFormSubmit(event) {
       console.log(err, "Ошибка при редактировании профиля");
     })
     .finally(() => {
-      loadingSaveButton(false, popupEditProfile);
+      loadSaveButton(false, saveEditButton, "Сохранение...", "Сохранить");
     });
 }
 
 //Добавление новой карточки
-function newCardSubmit(event) {
+function addNewCardSubmit(event) {
   event.preventDefault();
 
-  loadingSaveButton(true, popupNewCard);
+  loadSaveButton(true, saveNewCardButton, "Сохранение...", "Сохранить");
 
   addNewCard(newCardName.value, newCardLink.value)
     .then((data) => {
@@ -137,7 +137,7 @@ function newCardSubmit(event) {
       console.log(err, "Ошибка при добавлении новой карточки");
     })
     .finally(() => {
-      loadingSaveButton(false, popupNewCard);
+      loadSaveButton(false, saveNewCardButton, "Сохранение...", "Сохранить");
     });
 }
 
@@ -145,7 +145,7 @@ function newCardSubmit(event) {
 function editAvatarSubmit(event) {
   event.preventDefault();
 
-  loadingSaveButton(true, popupImageEditing);
+  loadSaveButton(true, saveAvatarButton, "Сохранение...", "Сохранить");
 
   changeAvatar(avatarLink.value)
     .then((data) => {
@@ -158,20 +158,9 @@ function editAvatarSubmit(event) {
       console.log(err, "Ошибка при редактировании аватара");
     })
     .finally(() => {
-      loadingSaveButton(false, popupImageEditing);
+      loadSaveButton(false, saveAvatarButton, "Сохранение...", "Сохранить");
     });
 }
-
-//Слушатели для изменения аватара
-buttonOpenImageEditing.addEventListener("mouseover", function () {
-  editingIcon.setAttribute("style", "display: block");
-  avatarImage.classList.add("profile__image-dark");
-});
-
-buttonOpenImageEditing.addEventListener("mouseout", function () {
-  editingIcon.setAttribute("style", "display: none");
-  avatarImage.classList.remove("profile__image-dark");
-});
 
 //Слушатели открытие попапов
 buttonOpenImageEditing.addEventListener("click", function () {
@@ -200,7 +189,7 @@ editAvatarForm.addEventListener("submit", editAvatarSubmit);
 
 editForm.addEventListener("submit", editFormSubmit);
 
-newCardForm.addEventListener("submit", newCardSubmit);
+newCardForm.addEventListener("submit", addNewCardSubmit);
 
 //Загрузка начальной страницы
 function initialPage() {
